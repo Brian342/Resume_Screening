@@ -179,3 +179,20 @@ def create_job(employer_id, title, company, location, description, requirements,
     return job_id
 
 
+def get_all_active_jobs():
+    """
+    Fetches all active job listings for the job seeker's job board.
+    Joins with users' table to get employer's name.
+
+    Returns a list of Row objects.
+    """
+    conn = get_connection()
+    jobs = conn.execute("""
+        SELECT j.*, u.full_name AS employer_name
+        FROM jobs j
+        JOIN users u ON j.employer_id = u.id
+        WHERE j.is_active = 1
+        ORDER BY j.created_at DESC
+    """).fetchall()
+    conn.close()
+    return jobs
