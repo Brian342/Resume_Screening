@@ -338,3 +338,10 @@ def get_seeker_stats(seeker_id):
     ).fetchone()[0]
 
     conn.close()
+
+    return {
+        "total_applied": total,
+        "qualified": qualified,
+        "pending":pending,
+        "rejected": rejected
+    }
