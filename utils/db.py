@@ -345,3 +345,22 @@ def get_seeker_stats(seeker_id):
         "pending":pending,
         "rejected": rejected
     }
+
+
+def update_application_score(application_id, ai_score, ml_label):
+    """
+    Updates the AI score and Ml label for an application after screening.
+    Called from apply.py after your AI/ML model processes the resume.
+
+    ai_score: float 0-100
+    ml_label: string e.g "Qualified", "Not Qualified", "Review Needed"
+    """
+
+    conn = get_connection()
+    conn.execute("""
+        UPDATE applications
+        SET ai_score = ?, ml_label = ?
+        WHERE id = ?
+    """, (ai_score, ml_label, application_id))
+    conn.commit()
+    conn.close()
