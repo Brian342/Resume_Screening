@@ -196,3 +196,20 @@ def get_all_active_jobs():
     """).fetchall()
     conn.close()
     return jobs
+
+
+def get_jobs_by_employer(employer_id):
+    """
+    Fetches all jobs posted by a specific employer.
+    Used on the employer dashboard to show their listings
+    """
+    conn = get_connection()
+    jobs = conn.execute("""
+        SELECT j.*, u.full_name AS employer_name
+        FROM jobs j
+        JOIN users u ON j.employer_id = u.id
+        WHERE j.is_active = 1
+        ORDER BY j.created_at DESC
+    """).fetchall()
+    conn.close()
+    return jobs
