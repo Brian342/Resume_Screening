@@ -101,3 +101,32 @@ def create_table():
     UNIQUE(job_id, seeker_id)
     )  
     """)
+
+    conn.commit()
+    conn.close()
+    print("Tables Created (or already exist).")
+
+    # User Function
+
+
+def create_user(full_name, email, password_hash, role):
+    """
+    Inserts a new user into the database.
+
+    Note: password_hash should already before calling this.
+    Hashed passwords are in app.py using bcrypt before passing here.
+    Returns True if successful, False if email already exists.
+    """
+    conn = get_connection()
+    try:
+        conn.execute("""
+        INSERT INTO users (full_name, email, password, role)
+        VALUES (?,?,?,?)
+        """, (full_name, email, password_hash, role))
+        conn.commit()
+        return True
+    except sqlite3.IntegrityError:
+        # Unique constraint on email was violated - email already registered
+        return False
+    finally:
+        conn.close()
