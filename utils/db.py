@@ -280,6 +280,49 @@ def get_applications_by_seeker(seeker_id):
     JOIN jobs j ON a.job_id = j.id
     WHERE a.seeker_id = ?
     ORDER BY a.applied_at DESC
-    """,(seeker_id,)).fetchall()
+    """, (seeker_id,)).fetchall()
     conn.close()
     return apps
+
+
+def get_applications_by_job(job_id):
+    """
+    Fetches all applications for a specific job.
+    Used on the employer dashboard to review applicants
+    Joins users table to show seeker name and email
+    """
+    conn = get_connection()
+    apps = conn.execute("""
+        SELECT a.*. u.full_name AS seeker_name, u.email AS seeker_email
+        FROM applications a
+        JOIN users u ON a.seeker_id = u.id
+        WHERE a.job_id = ?
+        ORDER BY a.ai_score DESC NULL LAST
+    """, (job_id,)).fetchall()
+    conn.close()
+    return apps
+
+
+def get_seeker_stats(seeker_id):
+    """
+    Returns a dictionary of dynamic stats for the seeker dashboard.
+    These power the st.metric() cards at the top of the dashboard
+
+    Returns:
+        {
+            "total_applied": 5,
+            "qualified": 2, # applications where status = 'approved'
+            "pending": 2,
+            "rejected":1
+        }
+    """
+    conn = get_connection()
+
+    total = conn.execute(
+        "SELECT COUNT(*) FROM applications WHERE seeker_id = ?", (seeker_id,)
+    ).fetchone()[0]
+
+    qualified = conn.execute(
+        "SELECT COUNT(*) FROM applications WHERE seeker_id = ? AND status = 'approved'",
+        (seeker_id,)
+    ).fetchone()[0]
