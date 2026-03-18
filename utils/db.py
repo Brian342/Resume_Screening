@@ -49,7 +49,7 @@ def create_table():
     # Stores both job seekers and employers in one table
     # The 'Role' column tells us which type of user they are.
     # Passwords are stored as hashed strings (never plain text)
-    
+
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS users(
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -61,4 +61,43 @@ def create_table():
     )
     """)
 
-    #
+    # JOBS' TABLE
+    # jobs are posted by employers (linked via employer_id -> user.id),
+    # is_active lets employers hide a job without deleting it.
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS jobs(
+    id                 INTEGER PRIMARY KEY AUTOINCREMENT,
+    employer_id         INTEGER NOT NULL REFERENCES    users(id),
+    title               TEXT        NOT NULL,
+    company             TEXT        NOT NULL,
+    location            TEXT        NOT NULL,
+    description         TEXT        NOT NULL,
+    requirements        TEXT        NOT NULL,
+    salary              TEXT,
+    is_active           INTEGER    DEFAULT 1,
+    created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
+    # Application table
+    # Created when a seeker applies to a job
+    # Resume_path: where we saved the uploaded pdf on disk
+    # answers: JSON string of the seeker's screener questions answers
+    # ai_score: 0-100 score f
+    # ml_label: Classification from your ML model e.g. "Qualified" / "Not Qualified"
+    # Status: employer's decision - pending/ approved / rejected
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS application (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    job_id          INTEGER NOT NULL REFERENCES jobs(id),
+    seeker_id       INTEGER NOT NULL REFERENCES users(id),
+    resume_path     TEXT,
+    answers         TEXT,
+    ai_score        REAL        DEFAULT NULL,
+    ml_label        TEXT        DEFAULT NULL,
+    status          TEXT        DEFAULT 'pending'
+                            CHECK(status IN ('pending', 'approved', 'rejected')),
+    applied_at      TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(job_id, seeker_id)
+    )  
+    """)
