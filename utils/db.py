@@ -130,3 +130,13 @@ def create_user(full_name, email, password_hash, role):
         return False
     finally:
         conn.close()
+
+
+def get_user_by_email(email):
+    """
+    Fetches a single user row by email address.
+    used during login to verify credentials.
+
+    Returns a Row object (like a dict) or None if not found.
+    Access fields like: user["email"], user["role], user["id"]
+    """
