@@ -140,3 +140,19 @@ def get_user_by_email(email):
     Returns a Row object (like a dict) or None if not found.
     Access fields like: user["email"], user["role], user["id"]
     """
+    conn = get_connection()
+    user = conn.execute(
+        "SELECT * FROM users WHERE email = ?", (email,)
+    ).fetchone()
+    conn.close()
+    return user
+
+
+def get_user_by_id(user_id):
+    """Fetches a user by their ID. Used to display profile info."""
+    conn = get_connection()
+    user = conn.execute(
+        "SELECT * FROM users WHERE id = ?", (user_id,)
+    ).fetchone()
+    conn.close()
+    return user
