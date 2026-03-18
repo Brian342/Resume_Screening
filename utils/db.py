@@ -156,3 +156,26 @@ def get_user_by_id(user_id):
     ).fetchone()
     conn.close()
     return user
+
+
+# Job Functions
+
+def create_job(employer_id, title, company, location, description, requirements, salary=""):
+    """
+    Inserts a new job posting into the database.
+    called from the employer dashboard when they post a new job.
+
+    Returns the ID of the newly created job
+    """
+    conn = get_connection()
+    cursor = conn.execute("""
+    INSERT INTO jobs (employer_id, title, company, location, description, requirements,
+    salary)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (employer_id, title, company, location, description, requirements, salary))
+    conn.commit()
+    job_id = cursor.lastrowid  # The auto-assigned ID of the new row
+    conn.close()
+    return job_id
+
+
