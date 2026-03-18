@@ -35,3 +35,30 @@ def get_connection():
     return conn
 
 
+# Table definitions
+def create_table():
+    """
+    Creates all tables if they do not already exist.
+    This runs every time the app starts. It is safe to call repeatedly
+    because of the IF NOT EXIST Clause.
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    # user Table-----------------------------------
+    # Stores both job seekers and employers in one table
+    # The 'Role' column tells us which type of user they are.
+    # Passwords are stored as hashed strings (never plain text)
+    
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS users(
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    full_name       TEXT        NOT NULL,
+    emaIl           TEXT        NOT NULL UNIQUE,
+    password        TEXT        NOT NULL,
+    role            TEXT        NOT NULL CHECK(role IN ('seeker', 'employer')),
+    created_at      TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
+    #
