@@ -265,3 +265,21 @@ def create_application(job_id, seeker_id, resume_path, answers_json):
         return False
     finally:
         conn.close()
+
+
+def get_applications_by_seeker(seeker_id):
+    """
+    Fetches all applications made by a job seeker.
+    Used on the seeker dashboard to show "My Applications" tab.
+    Joins jobs table to show job title and company
+    """
+    conn = get_connection()
+    apps = conn.execute("""
+    SELECT a.*, j.title AS job_title, j.company, j.location
+    FROM applications a
+    JOIN jobs j ON a.job_id = j.id
+    WHERE a.seeker_id = ?
+    ORDER BY a.applied_at DESC
+    """,(seeker_id,)).fetchall()
+    conn.close()
+    return apps
