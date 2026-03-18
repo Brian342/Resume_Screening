@@ -201,15 +201,67 @@ def get_all_active_jobs():
 def get_jobs_by_employer(employer_id):
     """
     Fetches all jobs posted by a specific employer.
-    Used on the employer dashboard to show their listings
+    Used on the employer dashboard to show their listings.
     """
     conn = get_connection()
     jobs = conn.execute("""
-        SELECT j.*, u.full_name AS employer_name
-        FROM jobs j
-        JOIN users u ON j.employer_id = u.id
-        WHERE j.is_active = 1
-        ORDER BY j.created_at DESC
-    """).fetchall()
+        SELECT * FROM jobs
+        WHERE employer_id = ?
+        ORDER BY created_at DESC
+    """, (employer_id,)).fetchall()
     conn.close()
     return jobs
+
+
+def get_job_by_id(job_id):
+    """
+    Fetch a single job by ID.
+    Used on the job detail page to show full information
+    """
+    conn = get_connection()
+    job = conn.execute(
+        "SELECT * FROM jobs WHERE id = ?", (job_id,)
+    ).fetchone()
+    conn.close()
+    return job
+
+
+def toggle_job_active(job_id, is_active):
+    """
+    Activate or deactivates a job listing.
+    Employers can pause a listing without deleting it.
+    is_active: 1 = visible to seekers, 0 = hidden
+    """
+    conn = get_connection()
+    conn.execute(
+        "UPDATE jobs SET is_active = ? WHERE id = ?", (is_active, job_id)
+    )
+    conn.commit()
+    conn.close()
+
+
+# Application Functions
+def create_application(job_id, seeker_id, resume_path, answers_json):
+    """
+    Saves a job application to the database.
+
+    answers_json: a JSON string of the seeker's question answers.
+    we use json.dumps() in apply.py before passing it here, e.g.:
+
+        import JSON
+        answer_json = json.dumps({"q1": "answer1", "q2": "answer2"})
+    Returns True if saved, False if already applied to this job
+    """
+    conn = get_connection()
+    try:
+        conn.execute("""
+            INSERT INTO applications (job_id, seeker_id, resume_path, answers)
+            VALUES (?, ?, ?, ?)
+        """, (job_id, seeker_id, resume_path, answers_json))
+        conn.commit()
+        return True
+    except sqlite3.IntegrityError:
+        # UNIQUE(job_id, seeker_id) violated - already applied
+        return False
+    finally:
+        conn.close()
