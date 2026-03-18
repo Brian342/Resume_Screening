@@ -326,3 +326,15 @@ def get_seeker_stats(seeker_id):
         "SELECT COUNT(*) FROM applications WHERE seeker_id = ? AND status = 'approved'",
         (seeker_id,)
     ).fetchone()[0]
+
+    pending = conn.execute(
+        "SELECT COUNT(*) FROM applications WHERE seeker_id = ? AND status = 'pending'",
+        (seeker_id,)
+    ).fetchone()[0]
+
+    rejected = conn.execute(
+        "SELECT COUNT(*) FROM applications WHERE seeker_id = ? AND status = 'rejected'",
+        (seeker_id,)
+    ).fetchone()[0]
+
+    conn.close()
