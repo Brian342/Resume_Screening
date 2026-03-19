@@ -166,11 +166,18 @@ def show_post_job_tab(employer_id):
                 st.error("Please fill in all required fields marked with *")
             else:
                 job_id = create_job(
-                    employer_id,
-                    title,
-                    company,
-                    location,
-                    description,
-                    requirements,
-                    salary
+                    employer_id = employer_id,
+                    title= title.strip(),
+                    company= company.strip(),
+                    location= location.strip(),
+                    description= description.strip(),
+                    requirements= requirements.strip(),
+                    salary = salary.strip()
                 )
+
+                st.success(f"Job Posted Successfully: Job ID #{job_id}")
+                st.balloons()
+
+
+# TAB 3 Applicants
+
