@@ -258,3 +258,98 @@ def show_signup_page():
         if st.button("Back to Login", use_container_width=True):
             st.session_state["auth_page"] = "login"
             st.rerun()
+
+
+# Sidebar (shown only after logged in)
+def show_sidebar():
+    """
+    Displays the navigation sidebar for logged-in users.
+    The sidebar content differs based on role.
+    """
+    with st.sidebar:
+        st.markdown(f"### Hello {st.session_state['user_name']}")
+        st.markdown(
+            f"`{'Job Seeker' if st.session_state['role'] == 'seeker' else 'Employer'}`"
+        )
+        st.divider()
+
+        if st.session_state["role"] == "seeker":
+            st.markdown("**Navigation**")
+            st.page_link("Pages/seeker_dashboard.py", label="My Dashboard", icon="📊")
+            st.page_link("Pages/job_board.py", label="Browse Jobs", icon="🕵️")
+
+        else:  # employer
+            st.markdown("**Navigation**")
+            st.page_link("Pages/employer_dashboard.py", label="Dashboard", icon="📊")
+
+        st.divider()
+        if st.button(" (🪵out) Log out", use_container_width=True):
+            do_logout()
+
+
+# MAIN ROUTER
+# ─────────────────────────────────────────────
+# This is where everything comes together.
+# Streamlit runs this section every time the page loads.
+#
+# FLOW:
+#   Not logged in → show login or signup form
+#   Logged in as seeker → show seeker welcome + sidebar
+#   Logged in as employer → show employer welcome + sidebar
+
+def main():
+    if not st.session_state["logged_in"]:
+        # User is not logged in - show auth forms
+        if st.session_state["auth_page"] == "signup":
+            show_signup_page()
+        else:
+            show_login_page()
+
+    else:
+        # User is Logged in - Shows sidebar and Welcome Screen
+        show_sidebar()
+
+        role = st.session_state["role"]
+        name = st.session_state["user_name"]
+
+        if role == "seeker":
+            st.title(f"Welcome Back, {name}!")
+            st.markdown(
+                "Use the **Sidebar** to Navigate to your dashboard or browse available jobs."
+            )
+
+            # Quick-action buttons on the Home screen
+
+            col1, col2 = st.columns(2)
+            with col1:
+                st.page_link(
+                    "Pages/seeker_dashboard.py",
+                    label="Go to My Dashboard",
+                    icon="📊",
+                    use_container_width=True
+                )
+            with col2:
+                st.page_link(
+                    "Pages/job_board.py",
+                    label="Browse Jobs",
+                    icons="🕵️",
+                    use_container_width=True
+                )
+
+        elif role == "employer":
+            st.title(f"Welcome back, {name}!")
+            st.markdown(
+                "Use the **sidebar** to manage your Job Listing and review applications."
+            )
+
+            col1, col2 = st.columns(2)
+            with col1:
+                st.page_link(
+                    "Pages/employer_dashboard.py",
+                    label="Go To Dashboard",
+                    icons="📊",
+                    use_container_width=True
+                )
+
+
+# E
