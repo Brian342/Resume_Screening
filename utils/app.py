@@ -207,4 +207,54 @@ def show_login_page():
             st.session_state["auth_page"] = "signup"
             st.rerun()
 
+
 # Signup Page UI
+def show_signup_page():
+    """Renders the registration form."""
+
+    col1, col2, clo3 = st.columns([1, 2, 1])
+
+    with col2:
+        st.markdown("## 🧳 JobMatch")
+        st.markdown("##### Pioneer Insurance Group Job Match Platform")
+        st.divider()
+
+        st.markdown("### Create your account")
+
+        full_name = st.text_input("Full name", placeholder="John Doe", key="signup_name")
+        email = st.text_input("Email address", placeholder="you@example.com", key="signup_email")
+        password = st.text_input("Password (min 6 characters)", type="password", key="signup_pass")
+        confirm = st.text_input("Confirm password", type="password", key="signup_confirm")
+
+        st.markdown("** I am a...**")
+        # st.radio lets the user pick one option
+        # The value returned is the selected label string
+        role_label = st.radio(
+            label="Account type",
+            options=["Job Seeker", "Employer"],
+            horizontal=True,
+            label_visibility="collapsed",  # Hide the label text
+            key="signup_role"
+        )
+        # map the display label to the database value
+        role = "seeker" if role_label == "Job Seeker" else "employer"
+
+        if st.button("Create account", use_container_width=True, type="primary"):
+            if password != confirm:
+                st.error("Password do not Match!!.")
+            else:
+                success, message = do_signup(full_name, email, password, role)
+                if success:
+                    st.success(message)
+                    st.balloons()
+                    # send them to the login page after successful signup
+                    st.session_state["auth_page"] = "login"
+                    st.rerun()
+                else:
+                    st.error(message)
+
+        st.divider()
+        st.markdown("Already have an account?")
+        if st.button("Back to Login", use_container_width=True):
+            st.session_state["auth_page"] = "login"
+            st.rerun()
