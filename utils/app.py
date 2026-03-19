@@ -126,3 +126,31 @@ def do_login(email: str, password: str):
     st.session_state["role"] = user["role"]
 
     return True, "Login successful."
+
+
+# Signup Logic
+
+def do_signup(full_name: str, email: str, password: str, role: str):
+    """
+    Validates Inputs and creates a new user account.
+
+    Returns (success: bool, message: str)
+    """
+    # Basic Validation - never trust user input
+    if not full_name.strip():
+        return False, "Please enter your full name."
+    if "@" not in email or "." not in email:
+        return False, "Please enter a valid email address."
+    if len(password) < 6:
+        return False, "Password must be at least 6 characters"
+
+    hashed = hash_password(password)
+    success = create_user(
+        full_name=full_name.strip(),
+        email=email.strip().lower(),
+        password_hash=hashed,
+        role=role
+    )
+
+    if not success:
+        return False, "An account with that email already exists."
