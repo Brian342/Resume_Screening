@@ -156,3 +156,18 @@ def do_signup(full_name: str, email: str, password: str, role: str):
         return False, "An account with that email already exists."
 
     return True, "Account Created: Please Log In."
+
+
+# LogOut
+def do_logout():
+    """
+    Clears all session states and returns users to the login screen.
+    Called when the user clicks the Logout button in the sidebar
+    """
+    for key in list(st.session_state.keys()):
+        del st.session_state[key]
+    init_session_state()    # Re-set defaults so the app doesn't break
+    st.rerun()      # Force the page to reload immediately
+
+
+# Login Page UI
