@@ -195,3 +195,16 @@ def show_applicants_tab(employer_id):
     if not jobs:
         st.info("Post a job first before reviewing applicants.")
         return
+
+    # Build a dict mapping "Job Title (ID)" -> job_id for the selectbox
+    # This gives the employer a readable label while we track the real ID
+    job_options = {f"{j['title']} - {j['company']}": j["id"] for j in jobs}
+
+    selected_label = st.selectbox(
+        "Select a job to review",
+        options=list(job_options.keys())
+    )
+    selected_job_id = job_options[selected_label]
+
+    # Fetch all applications for the selected job
+
