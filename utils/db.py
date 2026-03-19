@@ -114,7 +114,7 @@ def create_user(full_name, email, password_hash, role):
     Inserts a new user into the database.
 
     Note: password_hash should already before calling this.
-    Hashed passwords are in app.py using bcrypt before passing here.
+    Hashed passwords are in Sample File.py using bcrypt before passing here.
     Returns True if successful, False if email already exists.
     """
     conn = get_connection()
