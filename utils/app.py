@@ -196,7 +196,15 @@ def show_login_page():
                 success, message = do_login(email, password)
                 if success:
                     st.success(message)
-                    st.rerun() # Re-run the script - now logged_in=True, shows dashboard
+                    st.rerun()  # Re-run the script - now logged_in=True, shows dashboard
 
                 else:
                     st.error(message)
+
+        st.divider()
+        st.markdown("Don't have an account?")
+        if st.button("Create an account", use_container_width=True):
+            st.session_state["auth_page"] = "signup"
+            st.rerun()
+
+# Signup Page UI
