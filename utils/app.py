@@ -100,4 +100,20 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 
 # Login Logic
+def do_login(email: str, password: str):
+    """
+    Looks up the user by email, verifies their password,
+    and populates session_state if correct.
 
+    This function is called when the login button is clicked.
+    it does Not Display anything - it only updates state.
+    The UI re-runs after this and shows the dashboard.
+    """
+
+    user = get_user_by_email(email.strip().lower())
+
+    if user in None:
+        return False, "No account found with that email."
+
+    if not verify_password(password, user["password"]):
+        return False, "Incorrect password."
