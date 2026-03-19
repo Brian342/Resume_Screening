@@ -180,4 +180,18 @@ def show_post_job_tab(employer_id):
 
 
 # TAB 3 Applicants
+def show_applicants_tab(employer_id):
+    """
+    Lets the employer:
+        1. Select one of their jobs from a dropdown
+        2. See all applicants for that job with their AI score
+        3. Expand each applicant to read their resume answers
+        4. Approve or Reject - which triggers an email
+    """
+    st.markdown("### Review Applicants")
 
+    jobs = get_jobs_by_employer(employer_id)
+
+    if not jobs:
+        st.info("Post a job first before reviewing applicants.")
+        return
