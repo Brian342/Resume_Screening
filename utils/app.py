@@ -80,4 +80,24 @@ def init_session_state():
         if key not in st.session_state:
             st.session_state[key] = value
 
+
 init_session_state()
+
+
+# Password Helpers
+def hash_password(plain_password: str) -> str:
+    """Hashes a plain-text password using bcrypt. Returns a string."""
+    hashed = bcrypt.hashpw(plain_password.encode("utf-8"), bcrypt.gensalt())
+    return hashed.decode("utf-8")  # Store as String in SQLite
+
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """Returns True if plain_password matches the stored hash."""
+    return bcrypt.checkpw(
+        plain_password.encode("utf-8"),
+        hashed_password.encode("utf-8")
+    )
+
+
+# Login Logic
+
