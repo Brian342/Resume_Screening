@@ -228,5 +228,14 @@ def show_applicants_tab(employer_id):
     st.divider()
 
     # Applicant cards
-    # Applications come back sorted
+    # Applications come back sorted by ai_score DESC from db.py
+    # so the best matches apper at the top automatically.
+
+    for app in applications:
+        seeker_name = app["seeker_name"]
+        seeker_email = app["seeker_email"]
+        ai_score = app["ai_score"]
+        ml_label = app["ml_label"] or "Not scored yet"
+        status = app["status"]
+        app_id = app["id"]
 
