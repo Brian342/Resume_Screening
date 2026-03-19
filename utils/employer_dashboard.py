@@ -129,7 +129,6 @@ def show_post_job_tab(employer_id):
     # This is important for forms with many fields
 
     with st.form("post_job_form", clear_on_submit=True):
-
         col1, col2 = st.columns(2)
         with col1:
             title = st.text_input("Job Title *", placeholder="e.g. Data Analyst")
@@ -139,6 +138,17 @@ def show_post_job_tab(employer_id):
             location = st.text_input("Location *", placeholder="e.g. Nairobi, Kenya / Remote")
             salary = st.text_input("Salary / Range", placeholder="e.g. KES 80,000 - 120,000")
 
-
         st.markdown("----")
 
+        description = st.text_area(
+            "Job Description *",
+            placeholder="Describe the role, Responsibilities, team and Work Environment...",
+            height=180
+        )
+
+        requirements = st.text_area(
+            "Requirements *",
+            placeholder="List the skills, qualifications and experience needed...\n"
+                        "e.g.\n- Bachelor's degree in Computer Science\n- 2+ years Python experience",
+            height=150
+        )
