@@ -117,3 +117,12 @@ def do_login(email: str, password: str):
 
     if not verify_password(password, user["password"]):
         return False, "Incorrect password."
+
+    # Credentials are correct - populate session state
+    st.session_state["logged_in"] = True
+    st.session_state["user_id"] = user["id"]
+    st.session_state["user_name"] = user["full_name"]
+    st.session_state["user_email"] = user["email"]
+    st.session_state["role"] = user["role"]
+
+    return True, "Login successful."
