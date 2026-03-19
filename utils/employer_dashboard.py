@@ -122,4 +122,23 @@ def show_post_job_tab(employer_id):
     On submit.It calls create_job() from db.py and saves to the database.
     """
     st.markdown("### Post a New Job")
+    st.markdown("Fill in the details below. All fields marked \\* are required.")
+
+    # st.form groups widgets together so Streamlit only re-runs
+    # When the submit button is clicked - not on every keystroke
+    # This is important for forms with many fields
+
+    with st.form("post_job_form", clear_on_submit=True):
+
+        col1, col2 = st.columns(2)
+        with col1:
+            title = st.text_input("Job Title *", placeholder="e.g. Data Analyst")
+            company = st.text_input("Company Name *", placeholder="e.g. Pioneer Insurance Group")
+
+        with col2:
+            location = st.text_input("Location *", placeholder="e.g. Nairobi, Kenya / Remote")
+            salary = st.text_input("Salary / Range", placeholder="e.g. KES 80,000 - 120,000")
+
+
+        st.markdown("----")
 
