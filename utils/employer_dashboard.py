@@ -207,4 +207,26 @@ def show_applicants_tab(employer_id):
     selected_job_id = job_options[selected_label]
 
     # Fetch all applications for the selected job
+    applications = get_applications_by_job(selected_job_id)
+
+    if not applications:
+        st.info("No applications yet for this job.")
+        return
+
+    # Summary Bar
+    total = len(applications)
+    approved = sum(1 for a in applications if a["status"] == "approved")
+    rejected = sum(1 for a in applications if a["status"] == "rejected")
+    pending = sum(1 for a in applications if a["status"] == "pending")
+
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Total", total)
+    c2.metric("Pending", pending)
+    c3.metric("Approved", approved)
+    c4.metric("Rejected", rejected)
+
+    st.divider()
+
+    # Applicant cards
+    # Applications come back sorted
 
