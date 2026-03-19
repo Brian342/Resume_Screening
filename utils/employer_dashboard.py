@@ -239,3 +239,7 @@ def show_applicants_tab(employer_id):
         status = app["status"]
         app_id = app["id"]
 
+        # score display - coloured number
+        score_display = f"{ai_score:.0f}/100" if ai_score is not None else "Pending"
+        color = score_color(ai_score)
+
