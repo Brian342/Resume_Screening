@@ -1,14 +1,7 @@
 from datetime import datetime, timedelta
 import sqlite3
-import json
 import os
-import time
-import random
-import string
-import smtplib
-import hashlib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+
 
 DB_PATH = os.path.join(os.path.dirname(__file__), "Resume_app.db")
 
