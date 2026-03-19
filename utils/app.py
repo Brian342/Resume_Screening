@@ -154,3 +154,5 @@ def do_signup(full_name: str, email: str, password: str, role: str):
 
     if not success:
         return False, "An account with that email already exists."
+
+    return True, "Account Created: Please Log In."
