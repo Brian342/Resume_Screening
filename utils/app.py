@@ -27,6 +27,7 @@ INSTALL REQUIREMENTS FIRST:
 import streamlit as st
 import bcrypt
 from db import get_user_by_email, create_user
+from employer_dashboard import show_employer_dashboard
 
 # Page Configuration
 st.set_page_config(
@@ -74,7 +75,8 @@ def init_session_state():
         "user_name": None,
         "user_email": None,
         "role": None,
-        "auth_page": "login"  # starts o the login form by default
+        "auth_page": "login",  # starts o the login form by default
+        "current_page": "home"
     }
     for key, value in defaults.items():
         if key not in st.session_state:
@@ -112,7 +114,7 @@ def do_login(email: str, password: str):
 
     user = get_user_by_email(email.strip().lower())
 
-    if user in None:
+    if user is None:
         return False, "No account found with that email."
 
     if not verify_password(password, user["password"]):
@@ -275,12 +277,21 @@ def show_sidebar():
 
         if st.session_state["role"] == "seeker":
             st.markdown("**Navigation**")
-            st.page_link("Pages/seeker_dashboard.py", label="My Dashboard", icon="📊")
-            st.page_link("Pages/job_board.py", label="Browse Jobs", icon="🕵️")
+            if st.button("My Dashboard", use_container_width=True):
+                st.session_state["current_page"] = "seeker_dashboard"
+                st.rerun()
+            if st.button("Browse Jobs", use_container_width=True):
+                st.session_state["current_page"] = "job_board"
+                st.rerun()
+            # st.page_link("Pages/seeker_dashboard.py", label="My Dashboard", icon="📊")
+            # st.page_link("Pages/job_board.py", label="Browse Jobs", icon="🕵️")
 
         else:  # employer
             st.markdown("**Navigation**")
-            st.page_link("Pages/employer_dashboard.py", label="Dashboard", icon="📊")
+            if st.button("Dashboard", use_container_width=True):
+                st.session_state["current_page"] = "employer_dashboard"
+                st.rerun()
+            # st.page_link("Pages/employer_dashboard.py", label="Dashboard", icon="📊")
 
         st.divider()
         if st.button(" (🪵out) Log out", use_container_width=True):
@@ -309,14 +320,30 @@ def main():
         # User is Logged in - Shows sidebar and Welcome Screen
         show_sidebar()
 
+        page = st.session_state.get("current_page", "home")
         role = st.session_state["role"]
         name = st.session_state["user_name"]
 
-        if role == "seeker":
-            st.title(f"Welcome Back, {name}!")
-            st.markdown(
-                "Use the **Sidebar** to Navigate to your dashboard or browse available jobs."
-            )
+        if page == "home":
+            if role == "seeker":
+                st.title(f"Welcome Back, {name}!")
+                st.markdown(
+                    "Use the **Sidebar** to Navigate to your dashboard or browse available jobs."
+                )
+            elif role == "employer":
+                st.title(f"Welcome Back, {name}!")
+                st.markdown(
+                    "Use the **sidebar** to manage your job listings and review applicants."
+                )
+        elif page == "seeker_dashboard":
+            st.info("Seeker dashboard coming Soon...")
+
+        elif page == "job_board":
+            st.info("Job board Coming Soon...")
+
+        elif page == "employer_dashboard":
+            # show_employer_dashboard()
+            st.info("Employer dashboard coming Soon...")
 
             # Quick-action buttons on the Home screen
 
