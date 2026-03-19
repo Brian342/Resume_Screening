@@ -152,3 +152,25 @@ def show_post_job_tab(employer_id):
                         "e.g.\n- Bachelor's degree in Computer Science\n- 2+ years Python experience",
             height=150
         )
+
+        # st.form_submit_button only works inside st.form
+        # type="Primary" makes it the blue/highlighted button
+
+        submitted = st.form_submit_button("Post Job", type="primary", use_container_width=True)
+
+        # Handle submission
+        # This runs AFTER form block - important: Logic goes outside the form
+        if submitted:
+            # Validate required fields
+            if not all([title, company, location, description, requirements]):
+                st.error("Please fill in all required fields marked with *")
+            else:
+                job_id = create_job(
+                    employer_id,
+                    title,
+                    company,
+                    location,
+                    description,
+                    requirements,
+                    salary
+                )
