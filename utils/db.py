@@ -364,3 +364,19 @@ def update_application_score(application_id, ai_score, ml_label):
     """, (ai_score, ml_label, application_id))
     conn.commit()
     conn.close()
+
+
+def has_applied(job_id, seeker_id):
+    """
+    Checks if a seeker has already applied to a specific job.
+    Used in the job detail page to show 'Already Applied' Instead of Apply button.
+
+    Returns True or False
+    """
+    conn = get_connection()
+    result = conn.execute(
+        "SELECT id FROM application WHERE job_id = ? AND seeker_id = ?",
+        (job_id, seeker_id)
+    ).fetchone()
+    conn.close()
+    return result is not None
