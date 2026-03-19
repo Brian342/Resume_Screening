@@ -36,3 +36,43 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+# Global Style
+st.markdown("""
+    <style>
+        /* Hide the default Streamlit top menu and footer */
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+ 
+        /* Make the main container a bit narrower and centered */
+        .block-container {
+            padding-top: 2rem;
+            max-width: 900px;
+        }
+ 
+        /* Style for our custom card-like containers */
+        .auth-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid #e0e0e0;
+        }
+ 
+        /* Make the role selector pills look nicer */
+        div[data-testid="stRadio"] > div {
+            flex-direction: row;
+            gap: 1rem;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+
+# Session State Initialisation
+def init_session_state():
+    defaults = {
+        "logged_in": False,
+        "user_id": None,
+        "user_name": None,
+        "user_email": None,
+        "role": None,
+        "auth_page": "login"  # starts o the login form by default
+    }
