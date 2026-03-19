@@ -352,4 +352,8 @@ def main():
                 )
 
 
-# E
+# Entry Point
+# Python runs this when the file is executed directly
+# When Streamlit runs this file, __name__ == "__main__" is True.
+if __name__ == "__main__":
+    main()
