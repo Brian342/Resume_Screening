@@ -380,3 +380,7 @@ def has_applied(job_id, seeker_id):
     ).fetchone()
     conn.close()
     return result is not None
+
+
+# Initialise On Import
+create_table()
