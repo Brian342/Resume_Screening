@@ -25,3 +25,27 @@ from db import (
     toggle_job_active
 )
 
+try:
+    from email_utils import send_approval_email, send_rejection_email
+
+    EMAIL_READY = True
+except ImportError:
+    EMAIL_READY = False
+
+
+# Helper - Score Colour
+def score_color(score):
+    """
+    Returns a colour hex based on the AI score Value.
+    Used to colour-code scores in the applicant table.
+    Green -> 70 and above (strong Match)
+    Orange -> 40 to 69 (possible match)
+    Red -> below 40 (weak match)
+    """
+    if score is None:
+        return "#888888"  # grey - not scored yet
+    if score >= 70:
+        return "#2e7d32"  # green
+    if score >= 40:
+        return "#e65100"  # orange
+    return "#c62828"      # red
