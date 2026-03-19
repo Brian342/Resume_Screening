@@ -114,5 +114,12 @@ def show_overview_tab(employer_id):
                         st.success("Job re-activated.")
                         st.rerun()
 
+
 # Tab 2 Post A job
+def show_post_job_tab(employer_id):
+    """
+    A form for the employer to create a new job listing.
+    On submit.It calls create_job() from db.py and saves to the database.
+    """
+    st.markdown("### Post a New Job")
 
