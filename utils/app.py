@@ -166,8 +166,37 @@ def do_logout():
     """
     for key in list(st.session_state.keys()):
         del st.session_state[key]
-    init_session_state()    # Re-set defaults so the app doesn't break
-    st.rerun()      # Force the page to reload immediately
+    init_session_state()  # Re-set defaults so the app doesn't break
+    st.rerun()  # Force the page to reload immediately
 
 
 # Login Page UI
+def show_login_page():
+    """Renders the Login Form."""
+
+    col1, col2, col3 = st.columns([1, 2, 1])
+
+    with col2:
+        st.markdown("## 🧳 JobMatch")
+        st.markdown("##### Pioneer Insurance Group Job Match Platform")
+        st.divider()
+
+        st.markdown("### Sign in to your account")
+
+        # st.text_input returns whatever the user typed as a string
+        email = st.text_input("Email address", placeholder="you@example.com", key="login_email")
+        password = st.text_input("Password", type="password", key="login_password")
+        # type="password" hides the characters as the user types
+
+        # st.button returns True only on the frame the user clicks it
+        if st.button("Log in", use_container_width=True, type="primary"):
+            if not email or not password:
+                st.warning("Please fill in all fields!!")
+            else:
+                success, message = do_login(email, password)
+                if success:
+                    st.success(message)
+                    st.rerun() # Re-run the script - now logged_in=True, shows dashboard
+
+                else:
+                    st.error(message)
