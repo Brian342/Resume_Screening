@@ -104,7 +104,7 @@ def show_overview_tab(seeker_id: int):
     c2.metris(
         label="Qualified",
         value=stats["qualified"],
-        delta=f"{stats['qualified']} approved",    # delta shows a small +/- indicator
+        delta=f"{stats['qualified']} approved",  # delta shows a small +/- indicator
         delta_color="normal",
         help="Applications where the employer approved you"
     )
@@ -117,7 +117,7 @@ def show_overview_tab(seeker_id: int):
         label="Rejected",
         value=stats["rejected"],
         delta=f"-{stats['rejected']}" if stats["rejected"] > 0 else "0",
-        delta_color="inverse",     # Inverse make the delta red when negative
+        delta_color="inverse",  # Inverse make the delta red when negative
         help="Applications that were not successful"
     )
 
@@ -125,7 +125,7 @@ def show_overview_tab(seeker_id: int):
 
     # pie chart
     # only shows the chart if the seeker has at least one application
-    if stats["total_applied"] ==0:
+    if stats["total_applied"] == 0:
         st.info("You haven't applied to any jobs yet. Head to the **Browse Jobs** tab to get started!")
         return
 
@@ -148,4 +148,32 @@ def show_overview_tab(seeker_id: int):
             values.append(value)
             colors.append(color)
 
-    # Plotly express make
+    # Plotly express make charts very easy - one line creates the figure
+    fig = px.pie(
+        names=labels,
+        values=values,
+        color_discrete_sequence=colors,
+        hole=.45,  # Makes it a donut chart
+    )
+
+    # Customize the chart apperance
+    fig.update_traces(
+        textposition="outside",
+        textinfo="percent+label",
+        hovertemplate="<b>%{label}</b><br>Count: %{value}<extra></extra>"
+    )
+    fig.update_layout(
+        showlegend=True,
+        height=360,
+        margin=dict(t=20, b=20, l=20, r=20),
+        paper_bgcolor="rgba(0,0,0,0)",  # transparent background
+        plot_bgcolor="rgba(0,0,0,0)",
+        font=dict(size=13),
+        legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=.5)
+    )
+
+    col1, col2 = st.columns([1,1])
+    with col1:
+        st.plotly_chart(fig, use_container_width=True)
+    with col2:
+        st.markdown()
