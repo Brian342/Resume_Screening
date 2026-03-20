@@ -28,7 +28,7 @@ import streamlit as st
 import bcrypt
 from db import get_user_by_email, create_user
 from employer_dashboard import show_employer_dashboard
-from seeker_dashboard import show_seeker_dashboard
+# from seeker_dashboard import show_seeker_dashboard
 
 # Page Configuration
 st.set_page_config(
