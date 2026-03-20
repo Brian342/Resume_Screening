@@ -27,3 +27,28 @@ from db import (
     get_all_active_jobs,
     has_applied
 )
+
+
+# Helper Status Badge
+def status_badge(status: str) -> str:
+    """
+    Returns a coloured HTML pill badge for an application status.
+    we use st.markdown(..., unsafe_allow_html=True) to render these.
+
+    Pending -> grey pill
+    approved -> green pill
+    rejected -> red pill
+    """
+    colours = {
+        "pending": ("#f0f0f0", "#555555"),
+        "approved": ("#e6f4ea", "#2e7d32"),
+        "rejected": ("#fdecea", "c62828"),
+    }
+    bg, fg = colours.get(status, ("#f0f0f0", "#555555"))
+    label = status.upper()
+    return (
+        f"<span style='background:{bg};color:{fg};padding:3px 10px;"
+        f"border-radius:12px;font-size:12px;font-weight:600'>{label}</span>"
+    )
+
+#
