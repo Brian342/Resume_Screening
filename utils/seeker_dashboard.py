@@ -187,4 +187,117 @@ def show_overview_tab(seeker_id: int):
 
 
 # Tab 2 My Applications
+def show_my_applications_tab(seeker_id: int):
+    """
+    Shows a detailed list of every job the seeker has applied to.
+    Each row shows: job title, company, date applied, Ai Score Bar, status badge.
 
+    Seeker_id: logged-in user's ID from session_state
+    """
+    st.markdown("### My Applications")
+
+    # get_applications_by_seeker joins the jobs table so each row
+    # has job_title, company, location fields alongside the application data
+    applications = get_applications_by_seeker(seeker_id)
+
+    if not applications:
+        st.info("No Applications yet. Got to **Browse Jobs** to apply!")
+        return
+
+    # Filter bar
+    # let the seeker filter by status - useful once they have many applications
+    filter_status = st.selectbox(
+        "Filter by Status",
+        options=["All", "Pending", "Approved", "Rejected"],
+        index=0,
+        key="app_filter"
+    )
+
+    # apply the filter
+    if filter_status != "All":
+        applications = [a for a in applications if a["status"] == filter_status.lower()]
+
+    if not applications:
+        st.info(f"No {filter_status.lower()} applications found.")
+        return
+
+    st.markdown(f"Showing **{len(applications)}** application(s)")
+    st.divider()
+
+    # Application Cards
+    for app in applications:
+        # Each application is shown in a container (a subtle bordered box)
+        with st.container(border=True):
+            col1, col2, col3 = st.columns([3, 2, 1])
+
+            with col1:
+                st.markdown(f"### {app['job_title']}")
+                st.markdown(f"**{app['company']}**  {app['location']}")
+                st.markdown(
+                    f"Applied on: `{str(app['applied_at'])[:10]}`"
+                )
+
+            with col2:
+                st.markdown("**AI Match Score**")
+                # Render the HTML Progress Bar
+                st.markdown(score_bar(app["ai_score"]), unsafe_allow_html=True)
+
+                if app["ml_label"]:
+                    st.markdown(
+                        f"<span style='font-size:13px;color:#555'>ML: {app['ml_label']}</span>",
+                        unsafe_allow_html=True
+
+                    )
+            with col3:
+                st.markdown("**Status**")
+                # Render the coloured status pill
+                st.markdown(status_badge(app["status"]), unsafe_allow_html=True)
+
+
+# Tab 3 Browse Jobs
+def show_brose_jobs_tab(seeker_id: int):
+    """
+    Displays all active job listings as cards in a 2-column grid
+
+    Each card shows:
+        - Job Title + company name
+        - Location and Salary
+        - A short preview of the description
+        - A "View and Apply" button Or "Already Applied" if they've applied
+
+    Clicking "View and Apply" stores the Job ID in Session_state
+    and routes to the apply page
+
+    seeker_id: Used to check which jobs the seeker has already applied to
+    """
+    st.markdown("### Available Jobs")
+
+    jobs = get_all_active_jobs()
+
+    if not jobs:
+        st.info("No job listings available right now. check back soon!")
+        return
+
+    # search bar
+    # simple client-side filter - no extra DB call needed
+    search = st.text_input(
+        "Search Jobs",
+        placeholder="Search by Title, Company or Location...",
+        key="job_search"
+    ).lower()
+
+    # Filter jobs based on the search term
+    if search:
+        jobs = [
+            j for j in jobs
+            if search in j["title"].lower()
+            or search in j["company"].lower()
+            or search in j["location"].lower()
+        ]
+
+    if not jobs:
+        st.info("No Jobs Match your Search. Try different keywords.")
+        return
+
+    st.markdown(f"**{len(jobs)}** job(s) found")
+    st.divider()
