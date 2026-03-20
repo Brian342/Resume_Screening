@@ -176,4 +176,15 @@ def show_overview_tab(seeker_id: int):
     with col1:
         st.plotly_chart(fig, use_container_width=True)
     with col2:
-        st.markdown()
+        st.markdown("### Summary")
+        st.markdown(f"You have applied to **{stats['total_applied']}** job(s) in total.")
+        if stats["qualified"] > 0:
+            st.success(f"Congratulations! you have been approved for **{stats['qualified']}** Position(s).")
+            if stats["pending"] > 0:
+                st.info(f"**{stats['pending']}** application(s) are still under review.")
+            if stats["rejected"] > 0:
+                st.warning(f"Keep going! **{stats['rejected']}** application(s) were unsuccessful - more opportunities await.")
+
+
+# Tab 2 My Applications
+
