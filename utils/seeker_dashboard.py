@@ -101,7 +101,7 @@ def show_overview_tab(seeker_id: int):
         value=stats["total_applied"],
         help="Total number of Jobs you have applied to"
     )
-    c2.metris(
+    c2.metric(
         label="Qualified",
         value=stats["qualified"],
         delta=f"{stats['qualified']} approved",  # delta shows a small +/- indicator
@@ -379,7 +379,7 @@ def show_seeker_dashboard():
     seeker_id = st.session_state["user_id"]
 
     st.title("My Dashboard")
-    st.markdown(f"Welcome, **{st.session_state['user_name']}")
+    st.markdown(f"Welcome, **{st.session_state['user_name']}**")
     st.divider()
 
     tabs1, tabs2, tabs3 = st.tabs(["Overview", "My Applications", "Browse Jobs"])
