@@ -28,6 +28,7 @@ import streamlit as st
 import bcrypt
 from db import get_user_by_email, create_user
 from employer_dashboard import show_employer_dashboard
+from seeker_dashboard import show_seeker_dashboard
 
 # Page Configuration
 st.set_page_config(
@@ -336,47 +337,15 @@ def main():
                     "Use the **sidebar** to manage your job listings and review applicants."
                 )
         elif page == "seeker_dashboard":
+            # show_seeker_dashboard()
             st.info("Seeker dashboard coming Soon...")
 
         elif page == "job_board":
+            # show_seeker_dashboard() # Tab 3 of the same dashboard
             st.info("Job board Coming Soon...")
 
         elif page == "employer_dashboard":
-            # show_employer_dashboard()
-            st.info("Employer dashboard coming Soon...")
-
-            # Quick-action buttons on the Home screen
-
-            col1, col2 = st.columns(2)
-            with col1:
-                st.page_link(
-                    "Pages/seeker_dashboard.py",
-                    label="Go to My Dashboard",
-                    icon="📊",
-                    use_container_width=True
-                )
-            with col2:
-                st.page_link(
-                    "Pages/job_board.py",
-                    label="Browse Jobs",
-                    icons="🕵️",
-                    use_container_width=True
-                )
-
-        elif role == "employer":
-            st.title(f"Welcome back, {name}!")
-            st.markdown(
-                "Use the **sidebar** to manage your Job Listing and review applications."
-            )
-
-            col1, col2 = st.columns(2)
-            with col1:
-                st.page_link(
-                    "Pages/employer_dashboard.py",
-                    label="Go To Dashboard",
-                    icons="📊",
-                    use_container_width=True
-                )
+            show_employer_dashboard()
 
 
 # Entry Point

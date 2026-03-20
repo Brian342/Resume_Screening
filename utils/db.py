@@ -80,7 +80,7 @@ def create_table():
     # ml_label: Classification from your ML model e.g. "Qualified" / "Not Qualified"
     # Status: employer's decision - pending/ approved / rejected
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS application (
+    CREATE TABLE IF NOT EXISTS applications (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
     job_id          INTEGER NOT NULL REFERENCES jobs(id),
     seeker_id       INTEGER NOT NULL REFERENCES users(id),
@@ -286,11 +286,11 @@ def get_applications_by_job(job_id):
     """
     conn = get_connection()
     apps = conn.execute("""
-        SELECT a.*. u.full_name AS seeker_name, u.email AS seeker_email
+        SELECT a.*, u.full_name AS seeker_name, u.email AS seeker_email
         FROM applications a
         JOIN users u ON a.seeker_id = u.id
         WHERE a.job_id = ?
-        ORDER BY a.ai_score DESC NULL LAST
+        ORDER BY a.ai_score DESC NULLS LAST
     """, (job_id,)).fetchall()
     conn.close()
     return apps
@@ -368,7 +368,7 @@ def has_applied(job_id, seeker_id):
     """
     conn = get_connection()
     result = conn.execute(
-        "SELECT id FROM application WHERE job_id = ? AND seeker_id = ?",
+        "SELECT id FROM applications WHERE job_id = ? AND seeker_id = ?",
         (job_id, seeker_id)
     ).fetchone()
     conn.close()
