@@ -51,4 +51,53 @@ def status_badge(status: str) -> str:
         f"border-radius:12px;font-size:12px;font-weight:600'>{label}</span>"
     )
 
-#
+
+# Helper Score Bar
+def score_bar(score) -> str:
+    """
+    Returns an HTML progress Bar coloured by score Value.
+    Returns a 'Not scored Yet' message if score is None.
+
+    This is the same visual used in the employer dashboard,
+    so both sides see a consistent score representation.
+    """
+    if score is None:
+        return "<span style='color:#888;font-size:13px'>Not scored Yet</span>"
+
+    if score >= 70:
+        colour = "#2e7d32"  # green
+    elif score >= 40:
+        colour = "e65100"  # orange
+    else:
+        colour = "#c62828"  # red
+
+    return (
+        f"<div style='background:#e0e0e0;border-radius:8px;height:12px;width:100%'>"
+        f"<div style='background:{colour};width:{score}%;height:12px;border-radius:8px'>"
+        f"</div></div>"
+        f"<span style='color:{colour};font-size:12px;font-weight:600'>"
+        f"{score:.0f}/100</span>"
+    )
+
+
+# Tab 1 Overview
+def show_overview_tab(seeker_id: int):
+    """
+    Displays four dynamic metric cards and a pie chart
+    showing the breakdown of the seeker's application statuses.
+
+    seeker_id: logged-in user's ID from session_state
+    """
+    # get_seeker_stats returns a dict:
+    # {"total_applied": 5, "qualified": 2, "pending": 2, "rejected": 1}
+    stats = get_seeker_stats(seeker_id)
+
+    # metric cards
+    # Four equal columns, one metric each
+    c1, c2, c3, c4 = st.columns(4)
+
+    c1.metric(
+        label="Total Applied",
+        value=stats["total_applied"],
+        help="Total number of Jobs you have applied to"
+    )
