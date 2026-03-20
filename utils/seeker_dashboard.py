@@ -301,3 +301,94 @@ def show_brose_jobs_tab(seeker_id: int):
 
     st.markdown(f"**{len(jobs)}** job(s) found")
     st.divider()
+
+    # 2-column card grid
+    # Zip(jobs[0::2], jobs[1::2]) pairs up jobs into two columns:
+    # jobs[0::2] -> every even-indexed job (0, 2, 4 ...)
+    # jobs[1::2] -> every odd-indexed job (1, 3, 5 ...)
+    # We use zip_longest from itertools to handle an odd number of jobs
+    from itertools import zip_longest
+
+    pairs = list(zip_longest(jobs[0::2], jobs[1::2]))
+
+    for left_job, right_job in pairs:
+        col1, col2 = st.columns(2)
+
+        for col, job in zip([col1, col2], [left_job, right_job]):
+            if job is None:
+                continue # Last row with odd number of Jobs - leave right col empty
+
+            with col:
+                with st.container(border=True):
+                    # job title and company
+                    st.markdown(f"#### {job['title']}")
+                    st.markdown(f"**{job['company']}**")
+
+                    # location and salary row
+                    loc_sal_col1, loc_sal_col2 = st.columns(2)
+                    with loc_sal_col1:
+                        st.markdown(f"{job['location']}")
+                    with loc_sal_col2:
+                        st.markdown(f"{job['salary'] or 'Not specified'}")
+
+                    # Short description preview - first 120 characters
+                    preview = job["description"][:120]
+                    if len(job["description"]) > 120:
+                        preview += "..."
+                    st.markdown(
+                        f"<p style='color:#666;font-size:14px:margin:8px 0'>{preview}</p>",
+                        unsafe_allow_html=True
+                    )
+
+                    st.markdown("---")
+
+                    # check if already applied - show different button
+                    already_applied = has_applied(job["id"], seeker_id)
+
+                    if already_applied:
+                        st.markdown(
+                            "<span style='color:#2e7d32;font-weight:600;"
+                            "font-size:14px'> Already Applied</span>",
+                            unsafe_allow_html=True
+                        )
+                    else:
+                        # "View & Apply" stores the selected job in session_state
+                        # and navigates to the apply page
+                        # key must be unique per job - we use the job ID
+                        if st.button(
+                            "View & Apply",
+                            key=f"apply_btn_{job['id']}",
+                            use_container_width=True,
+                            type="primary"
+                        ):
+                            # store which job they selected
+                            st.session_state["selected_job_id"] = job["id"]
+                            # Navigate to the apply page
+                            st.session_state["current_page"] = "apply"
+                            st.rerun()
+
+
+# Main Function
+def show_seeker_dashboard():
+    """
+    Entry point for this page.
+    app.py calls this when current_page == "seeker_dashboard".
+
+    Read seeker ID from session_state and render three tabs.
+    """
+    seeker_id = st.session_state["user_id"]
+
+    st.title("My Dashboard")
+    st.markdown(f"Welcome, **{st.session_state['user_name']}")
+    st.divider()
+
+    tabs1, tabs2, tabs3 = st.tabs(["Overview", "My Applications", "Browse Jobs"])
+
+    with tabs1:
+        show_overview_tab(seeker_id)
+
+    with tabs2:
+        show_my_applications_tab(seeker_id)
+
+    with tabs3:
+        show_brose_jobs_tab(seeker_id)
