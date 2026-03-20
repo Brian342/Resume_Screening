@@ -101,3 +101,51 @@ def show_overview_tab(seeker_id: int):
         value=stats["total_applied"],
         help="Total number of Jobs you have applied to"
     )
+    c2.metris(
+        label="Qualified",
+        value=stats["qualified"],
+        delta=f"{stats['qualified']} approved",    # delta shows a small +/- indicator
+        delta_color="normal",
+        help="Applications where the employer approved you"
+    )
+    c3.metric(
+        label="Pending",
+        value=stats["pending"],
+        help="Applications still awaiting employer review"
+    )
+    c4.metric(
+        label="Rejected",
+        value=stats["rejected"],
+        delta=f"-{stats['rejected']}" if stats["rejected"] > 0 else "0",
+        delta_color="inverse",     # Inverse make the delta red when negative
+        help="Applications that were not successful"
+    )
+
+    st.divider()
+
+    # pie chart
+    # only shows the chart if the seeker has at least one application
+    if stats["total_applied"] ==0:
+        st.info("You haven't applied to any jobs yet. Head to the **Browse Jobs** tab to get started!")
+        return
+
+    st.markdown("### Application Status Breakdown")
+
+    # Build the data for the chart
+    # we filter out categories with 0 so the chart doesn't show empty slices
+    labels = []
+    values = []
+    colors = []
+
+    status_map = [
+        ("Approved", stats["qualified"], "#2e7d32"),
+        ("Pending", stats["pending"], "#f9a825"),
+        ("Rejected", stats["rejected"], "#c62828"),
+    ]
+    for label, value, color in status_map:
+        if value > 0:
+            labels.append(label)
+            values.append(value)
+            colors.append(color)
+
+    # Plotly express make
