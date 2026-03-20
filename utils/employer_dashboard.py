@@ -305,3 +305,9 @@ def show_applicants_tab(employer_id):
                                 job_title=job["title"],
                                 company = job["company"]
                             )
+                            st.success(f"Approved: Congratulations email sent to {seeker_email}")
+
+                        else:
+                            st.success("Approved: (Email will send once email_utils.py is set up.)")
+
+                        st.rerun()
