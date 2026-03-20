@@ -166,13 +166,13 @@ def show_post_job_tab(employer_id):
                 st.error("Please fill in all required fields marked with *")
             else:
                 job_id = create_job(
-                    employer_id = employer_id,
-                    title= title.strip(),
-                    company= company.strip(),
-                    location= location.strip(),
-                    description= description.strip(),
-                    requirements= requirements.strip(),
-                    salary = salary.strip()
+                    employer_id=employer_id,
+                    title=title.strip(),
+                    company=company.strip(),
+                    location=location.strip(),
+                    description=description.strip(),
+                    requirements=requirements.strip(),
+                    salary=salary.strip()
                 )
 
                 st.success(f"Job Posted Successfully: Job ID #{job_id}")
@@ -243,3 +243,66 @@ def show_applicants_tab(employer_id):
         score_display = f"{ai_score:.0f}/100" if ai_score is not None else "Pending"
         color = score_color(ai_score)
 
+        # status
+        status_icon = {"pending": "🕐", "approved": "✅", "rejected": "❌"}.get(status, "")
+
+        with st.expander(
+                f"{status_icon} {seeker_name} | Score: {score_display} | {ml_label}"
+        ):
+            col1, col2 = st.columns([2, 1])
+
+            with col1:
+                st.markdown(f"**Email:** {seeker_email}")
+                st.markdown(f"** Applied:** {str(app['applied_at'])[:10]}")
+                st.markdown(f"**Current status:** `{status.upper()}`")
+
+                # show AI score as a coloured progress bar
+                if ai_score is not None:
+                    st.markdown(f"**AI Match Score:**")
+                    st.markdown(
+                        f"<div style='background:#e0e0e0;border-radius:8px;height:16px;width:100%'>"
+                        f"<div style='background:{color};width:{ai_score}%;height:16px;"
+                        f"border-radius:8px;'></div></div>"
+                        f"<p style='color:{color};font-weight:600;margin-top:4px'>"
+                        f"{ai_score:.0f} / 100 — {ml_label}</p>",
+                        unsafe_allow_html=True
+                    )
+
+                # show resume path if exists
+                if app["resume_path"]:
+                    st.markdown(f"**Resume file:** `{app['resume_path']}`")
+
+                # Parse and display screening question answers
+                if app["answers"]:
+                    st.markdown("**Screening answers:**")
+                    try:
+                        answers = json.loads(app["answers"])
+                        for question, answer in answers.items():
+                            st.markdown(f"- **[question]:** {answer}")
+                    except (json.JSONDecodeError, TypeError):
+                        st.markdown(f"_{app['answers']}_")
+
+            with col2:
+                st.markdown("**Decision**")
+
+                # Only show action buttons if still pending
+                # Once a decision is made the buttons are replaced by a label
+                if status == "pending":
+                    if st.button(
+                            "Approve",
+                            keys=f"approve_{app_id}",
+                            use_container_width=True,
+                            type="primary"
+                    ):
+                        update_application_score(app_id, "approved")
+
+                        # Send Congratulation email
+                        if EMAIL_READY:
+                            job = [j for j in jobs if j["id"] == selected_job_id][0]
+                            send_approval_email(
+                                to_email=seeker_email,
+                                to_name=seeker_name,
+                                job_title=job["title"],
+
+
+                            )
