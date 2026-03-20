@@ -349,5 +349,23 @@ def show_employer_dashboard():
     It reads the employer's ID from session_state - which was set
     during login in app.py - and passes it to each tab function
     """
+    employer_id = st.session_state["user_id"]
+
+    st.title("Employer Dashboard")
+    st.markdown(f"Logged in as **{st.session_state['user_name']}**")
+    st.divider()
+
+    # st.tabs returns a list of tab context managers
+    # The labels apper as clickable tabs at the top of the section
+    tab1, tab2, tab3 = st.tabs(["Overview", "Post a job", "Applicants"])
+
+    with tab1:
+        show_overview_tab(employer_id)
+
+    with tab2:
+        show_post_job_tab(employer_id)
+
+    with tab3:
+        show_applicants_tab(employer_id)
 
 
