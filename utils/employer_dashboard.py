@@ -311,3 +311,27 @@ def show_applicants_tab(employer_id):
                             st.success("Approved: (Email will send once email_utils.py is set up.)")
 
                         st.rerun()
+
+                    if st.button(
+                        "Reject",
+                        key=f"reject_{app_id}",
+                        use_container_width=True
+                    ):
+                        update_application_score(app_id, "rejected")
+
+                        #Send Rejection email
+                        if EMAIL_READY:
+                            job = [j for j in jobs if j["id"] == selected_job_id][0]
+                            send_rejection_email(
+                                to_email = seeker_email,
+                                to_name = seeker_name,
+                                job_title = job["title"],
+                                company = job["company"]
+                            )
+                            st.warning(f"Rejected. Notification sent to {seeker_email}.")
+                        else:
+                            st.warning(f"Rejected. (Email will send once email_utils.py is set up.)")
+
+                        st.rerun()
+
+
