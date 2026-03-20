@@ -303,6 +303,5 @@ def show_applicants_tab(employer_id):
                                 to_email=seeker_email,
                                 to_name=seeker_name,
                                 job_title=job["title"],
-
-
+                                company = job["company"]
                             )
