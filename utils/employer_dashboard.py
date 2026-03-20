@@ -334,4 +334,20 @@ def show_applicants_tab(employer_id):
 
                         st.rerun()
 
+                elif status == "approved":
+                    st.success("Approved")
+                elif status == "rejected":
+                    st.error("Rejected")
+
+
+# Main Function called from app.py
+def show_employer_dashboard():
+    """
+    Enty point for this page.
+    app.py calls this function when current_page == "employer_dashboard".
+
+    It reads the employer's ID from session_state - which was set
+    during login in app.py - and passes it to each tab function
+    """
+
 
